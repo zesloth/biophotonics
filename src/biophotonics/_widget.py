@@ -8,9 +8,10 @@ Replace code below according to your needs.
 """
 from typing import TYPE_CHECKING
 
-from qtpy.QtWidgets import QHBoxLayout, QPushButton, QWidget
+from qtpy.QtWidgets import QHBoxLayout, QPushButton, QWidget, QVBoxLayout
 
 from biophotonics.segmentation import RFWidget
+from biophotonics.watershed import WatershedWidget
 
 if TYPE_CHECKING:
     import napari
@@ -26,9 +27,10 @@ class ExampleQWidget(QWidget):
         self.viewer = napari_viewer
 
         self.rf_widget = RFWidget(self.viewer)
-
-        self.setLayout(QHBoxLayout())
+        self.ws_widget = WatershedWidget(self)
+        self.setLayout(QVBoxLayout())
         self.layout().addWidget(self.rf_widget)
+        self.layout().addWidget(self.ws_widget)
 
     def _on_click(self):
         print("napari has", len(self.viewer.layers), "layers")

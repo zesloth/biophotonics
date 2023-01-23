@@ -1,24 +1,8 @@
 import numpy as np
-from PyQt5.QtWidgets import QWidget, QPushButton, QCheckBox, QVBoxLayout, QLabel, QLineEdit, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QPushButton, QCheckBox, QVBoxLayout, QLabel
 
-
-class TextBoxWidget(QWidget):
-    def __init__(self, box_name, default_text):
-        super().__init__()
-
-        self.setLayout(QHBoxLayout())
-
-        self.root_label = QLabel(f'{box_name}: ')
-
-        self.root_textbox = QLineEdit(self)
-        self.root_textbox.setText(default_text)
-
-        self.layout().addWidget(self.root_label)
-        self.layout().addWidget(self.root_textbox)
-
-    def get_text(self):
-        return self.root_textbox.text()
-
+from biophotonics.utils import TextBoxWidget
+from sklearn.exceptions import NotFittedError
 
 class RFWidget(QWidget):
     def __init__(self, napari_viewer):
@@ -75,8 +59,8 @@ class RFWidget(QWidget):
 
         self.clf = future.fit_segmenter(training_labels, features, clf)
 
-        result = future.predict_segmenter(features, self.clf)
-        self.viewer.add_labels(result, name=f'{name} segmentation')
+        result = self.predict_segmenter(features, self.clf)
+        self.viewer.add_image(result, name=f'{name} segmentation probabilities')
         return
 
 
@@ -118,6 +102,58 @@ class RFWidget(QWidget):
         sob = sobel(img)[..., np.newaxis]
         features = np.concatenate([features, sob, gaussians[1]-gaussians[0]], axis=-1)
 
-        self.viewer.add_image(features, name='simple_features')
+        # self.viewer.add_image(features, name='simple_features')
 
         return features
+
+    def predict_segmenter(self, features, clf):
+        """
+        taken from https://github.com/scikit-image/scikit-image/blob/v0.19.2/skimage/future/trainable_segmentation.py#L89-L118
+        Segmentation of images using a pretrained classifier.
+        Parameters
+        ----------
+        features : ndarray
+            Array of features, with the last dimension corresponding to the number
+            of features, and the other dimensions are compatible with the shape of
+            the image to segment, or a flattened image.
+        clf : classifier object
+            trained classifier object, exposing a ``predict`` method as in
+            scikit-learn's API, for example an instance of
+            ``RandomForestClassifier`` or ``LogisticRegression`` classifier. The
+            classifier must be already trained, for example with
+            :func:`skimage.segmentation.fit_segmenter`.
+        Returns
+        -------
+        output : ndarray
+            Labeled array, built from the prediction of the classifier.
+        """
+        sh = features.shape
+        if features.ndim > 2:
+            features = features.reshape((-1, sh[-1]))
+
+        try:
+            predicted_labels = clf.predict(features)
+            print(f'{predicted_labels.shape}')
+            predicted_labels = clf.predict_proba(features)
+            print(f'{predicted_labels.shape}')
+        except NotFittedError:
+            raise NotFittedError(
+                "You must train the classifier `clf` first"
+                "for example with the `fit_segmenter` function."
+            )
+        except ValueError as err:
+            if err.args and 'x must consist of vectors of length' in err.args[0]:
+                raise ValueError(
+                    err.args[0] + '\n' +
+                    "Maybe you did not use the same type of features for training the classifier."
+                )
+            else:
+                raise err
+        if len(predicted_labels.shape) ==1:
+            output = predicted_labels.reshape(sh[:-1])
+        elif len(predicted_labels.shape) ==2:
+            feature_dim = predicted_labels.shape[-1]
+            s = list(sh[:-1]) + [feature_dim]
+            output = predicted_labels.reshape(s)
+            output = np.rollaxis(output, 2, 0)
+        return output

@@ -1,0 +1,48 @@
+name: biophotonics
+display_name: biophotonics
+contributions:
+  commands:
+    - id: biophotonics.get_reader
+      python_name: biophotonics._reader:napari_get_reader
+      title: Open data with biophotonics
+    - id: biophotonics.write_multiple
+      python_name: biophotonics._writer:write_multiple
+      title: Save multi-layer data with biophotonics
+    - id: biophotonics.write_single_image
+      python_name: biophotonics._writer:write_single_image
+      title: Save image data with biophotonics
+    - id: biophotonics.make_sample_data
+      python_name: biophotonics._sample_data:make_sample_data
+      title: Load sample data from biophotonics
+    - id: biophotonics.make_qwidget
+      python_name: biophotonics._widget:ExampleQWidget
+      title: Make example QWidget
+    - id: biophotonics.make_magic_widget
+      python_name: biophotonics._widget:example_magic_widget
+      title: Make example magic widget
+    - id: biophotonics.make_func_widget
+      python_name: biophotonics._widget:example_function_widget
+      title: Make example function widget
+  readers:
+    - command: biophotonics.get_reader
+      accepts_directories: false
+      filename_patterns: ['*.npy']
+  writers:
+    - command: biophotonics.write_multiple
+      layer_types: ['image*','labels*']
+      filename_extensions: []
+    - command: biophotonics.write_single_image
+      layer_types: ['image']
+      filename_extensions: ['.npy']
+  sample_data:
+    - command: biophotonics.make_sample_data
+      display_name: biophotonics
+      key: unique_id.1
+  widgets:
+    - command: biophotonics.make_qwidget
+      display_name: Example QWidget
+    - command: biophotonics.make_magic_widget
+      display_name: Example Magic Widget
+    - command: biophotonics.make_func_widget
+      autogenerate: true
+      display_name: Example Function Widget

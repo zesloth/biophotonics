@@ -44,6 +44,10 @@ class RFWidget(QWidget):
             raise Exception('training labels must be in a layer called "Labels"')
 
         raw_img = self.viewer.layers.selection.active.data
+
+        if (raw_img.shape) > 2:
+            raise Exception('please ensure that a 2D image is selected; segmentation of 3D images will take a very long time')
+
         name = self.viewer.layers.selection.active.name
 
         if self.adaptive_background_checkbox.isChecked() & (raw_img[training_labels == 1].any()):
@@ -60,8 +64,6 @@ class RFWidget(QWidget):
 
         result = self.predict_segmenter(features, self.clf)
         self.viewer.add_image(result, name=f'{name} segmentation probabilities')
-        return
-
 
     def max_projection(self):
         z0 = self.dimension_input_first.get_text()

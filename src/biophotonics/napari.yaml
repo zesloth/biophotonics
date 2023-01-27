@@ -14,9 +14,15 @@ contributions:
     - id: biophotonics.make_sample_data
       python_name: biophotonics._sample_data:make_sample_data
       title: Load sample data from biophotonics
-    - id: biophotonics.make_qwidget
-      python_name: biophotonics._widget:ExampleQWidget
-      title: Make example QWidget
+    - id: biophotonics.random_forest
+      python_name: biophotonics._widget:RandomForest
+      title: random forest
+    - id: biophotonics.segmentation
+      python_name: biophotonics._widget:Watershed
+      title: segmentation
+    - id: biophotonics.spot_finding
+      python_name: biophotonics._widget:SpotFinder
+      title: spot finding
   readers:
     - command: biophotonics.get_reader
       accepts_directories: false
@@ -28,10 +34,10 @@ contributions:
     - command: biophotonics.write_single_image
       layer_types: ['image']
       filename_extensions: ['.npy']
-  sample_data:
-    - command: biophotonics.make_sample_data
-      display_name: biophotonics
-      key: unique_id.1
   widgets:
-    - command: biophotonics.make_qwidget
-      display_name: Example QWidget
+    - command: biophotonics.random_forest
+      display_name: Random Forest
+    - command: biophotonics.segmentation
+      display_name: Segmentation
+    - command: biophotonics.spot_finding
+      display_name: Spot finder

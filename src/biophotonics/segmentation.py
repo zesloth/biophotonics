@@ -8,7 +8,6 @@ class RFWidget(QWidget):
     def __init__(self, napari_viewer):
         super().__init__()
         self.viewer = napari_viewer
-        # load dummy image
 
         self.title = QLabel()
         self.title.setText('biophotonics')
@@ -101,8 +100,6 @@ class RFWidget(QWidget):
 
         sob = sobel(img)[..., np.newaxis]
         features = np.concatenate([features, sob, gaussians[1]-gaussians[0]], axis=-1)
-
-        # self.viewer.add_image(features, name='simple_features')
 
         return features
 

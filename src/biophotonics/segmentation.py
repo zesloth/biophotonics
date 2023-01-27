@@ -45,7 +45,7 @@ class RFWidget(QWidget):
 
         raw_img = self.viewer.layers.selection.active.data
 
-        if (raw_img.shape) > 2:
+        if len(raw_img.shape) > 2:
             raise Exception('please ensure that a 2D image is selected; segmentation of 3D images will take a very long time')
 
         name = self.viewer.layers.selection.active.name
@@ -63,7 +63,7 @@ class RFWidget(QWidget):
         self.clf = future.fit_segmenter(training_labels, features, clf)
 
         result = self.predict_segmenter(features, self.clf)
-        self.viewer.add_image(result, name=f'{name} segmentation probabilities')
+        self.viewer.add_image(result, name=f'segmentation probabilities')
 
     def max_projection(self):
         z0 = self.dimension_input_first.get_text()

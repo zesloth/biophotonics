@@ -7,7 +7,7 @@
 [![codecov](https://codecov.io/gh/pesav/biophotonics/branch/main/graph/badge.svg)](https://codecov.io/gh/pesav/biophotonics)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/biophotonics)](https://napari-hub.org/plugins/biophotonics)
 
-A simple plugin to use FooBar segmentation within napari
+A simple plugin to use random forest segmentation and simplified mRNA spot detection within napari
 
 ----------------------------------
 
